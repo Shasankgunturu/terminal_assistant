@@ -1,7 +1,7 @@
 # to add:
 # give output also for decoding as when debugging carry_errors
 # multiple lines input while doing so
-
+# deal with &&
 import google.generativeai as genai
 import os
 import PIL.Image
