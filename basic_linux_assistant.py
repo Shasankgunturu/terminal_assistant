@@ -13,10 +13,9 @@ def get_time_of_day(time):
         return "Evening"
     else:
         return "Night"
-
-# subprocess.run(["ls", "-l"]) 
+ 
 curr_path = os.getcwd()
-genai.configure(api_key='APIKEY')
+genai.configure(api_key=os.environ['APIKEY'])
 model = genai.GenerativeModel("gemini-1.5-flash")
 chat = model.start_chat(
     history=[
@@ -29,8 +28,7 @@ chat = model.start_chat(
         {"role": "model", "parts": "Great to meet you."},
     ]
 )
-# response = chat.send_message("You know what you are suppossed to do?")
-# print(response.text)
+
 now = datetime.now()
 print(f'Good {get_time_of_day(now.hour)} Shasank.\nDate & Time: {now.ctime()}\nHow can I help you today?')
 while True:
@@ -49,9 +47,6 @@ while True:
         commands = [line.strip() for line in commands.splitlines() if line.strip()]
         commands.reverse()
         for command in commands:
-            # command = " ".join(command)
-            # Join the list of lines into a single command string (if necessary)
-            # You can skip this if the command is always on a single line
             command_list = command.split()
             result = subprocess.run(command_list, capture_output=True, text=True)
             print("Output:\n", result.stdout)
