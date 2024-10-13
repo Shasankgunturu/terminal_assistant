@@ -16,7 +16,7 @@ def get_time_of_day(time):
 
 # subprocess.run(["ls", "-l"]) 
 curr_path = os.getcwd()
-genai.configure(api_key='AIzaSyB9sOdMTg4zysw1OMx4vkEB2W70JRMyTr8')
+genai.configure(api_key='APIKEY')
 model = genai.GenerativeModel("gemini-1.5-flash")
 chat = model.start_chat(
     history=[
