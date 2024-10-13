@@ -1,3 +1,7 @@
+# to add:
+# give output also for decoding as when debugging carry_errors
+# multiple lines input while doing so
+
 import google.generativeai as genai
 import os
 import PIL.Image
@@ -19,7 +23,7 @@ genai.configure(api_key=os.environ['APIKEY'])
 model = genai.GenerativeModel("gemini-1.5-flash")
 chat = model.start_chat(
     history=[
-        {"role": "user", "parts": "Hello, You are a terminal assistant on my Ubuntu system. My OS specs are Elementary OS based on Ubuntu 22.04. I \
+        {"role": "user", "parts": "Hello, I am Shasank. You are a terminal assistant on my Ubuntu system. My OS specs are Elementary OS based on Ubuntu 22.04. I \
          want you to understand my daily usage, help me autofill my commands, and also give me the required Linux, git, or any other commands per my\
          query. I also want you to understand my codes and file structures and recommend solutions based on my errors. I am an AI and Robotics \
          developer. Give me simple answers with only the commands and avoid any other information. Note: use apt-get and not just apt. \
@@ -31,9 +35,33 @@ chat = model.start_chat(
 
 now = datetime.now()
 print(f'Good {get_time_of_day(now.hour)} Shasank.\nDate & Time: {now.ctime()}\nHow can I help you today?')
+carry_errors = []
 while True:
     now = datetime.now()
-    query = input("User: ")
+    if carry_errors:
+        query = input("User: Would you like to look up previous error? y/n ")
+        # while query!="y" or query!="n":
+        #     query = input("User: Would you like to look up previous error? y/n ")
+
+        if query=="y":
+            if len(carry_errors)>1:
+                print("Select the error you want to follow up: ")
+                for i in range(len(carry_errors)):
+                    print(f'{i+1}: {carry_errors[i]}')
+                number = input("Enter the number of the error ")
+            else:
+                number=1
+            query = carry_errors[number-1]
+        elif query=="n":
+            pass        
+        carry_errors.clear()    
+    else:
+        query = input("User: ")
+    if query == "thanks that is all for today":
+        response = chat.send_message(query)
+        rest_of_words = " ".join(response.text.split()[1:])
+        print(rest_of_words)
+        break
     response = chat.send_message(query)
     rest_of_words = " ".join(response.text.split()[1:])
     if response.text.split()[0] == "no":
@@ -41,17 +69,21 @@ while True:
         continue
     print("Batman: ", rest_of_words)
     i = input("\nRun the command? y/n ")
+    # while i!="y" or i!="n":
+        # i = input("\nRun the command? y/n ")
     print()
     if i=="y":
-        commands = response.text.replace("```", "").strip()
+        commands = rest_of_words.replace("```", "").strip()
         commands = [line.strip() for line in commands.splitlines() if line.strip()]
         commands.reverse()
         for command in commands:
             command_list = command.split()
             result = subprocess.run(command_list, capture_output=True, text=True)
-            print("Output:\n", result.stdout)
+            if result.stdout:
+                print("Output:\n", result.stdout)
             if result.stderr:
                 print("Errors :\n", result.stderr)
+                carry_errors.append(result.stderr)
 
 # print("Type something (press ESC to stop):")
 
