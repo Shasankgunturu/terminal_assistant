@@ -28,7 +28,7 @@ chat = model.start_chat(
          query. I also want you to understand my codes and file structures and recommend solutions based on my errors. I am an AI and Robotics \
          developer. Give me simple answers with only the commands and avoid any other information. Note: use apt-get and not just apt. \
          Another thing: If what you returned is a command then your output should be printing true and then the command. If if is a follow up \
-         question or somethiong, then print no and then the question"},
+         question or somethiong, then print no and then the question. If you have multiple commands to give, give them in seperate lines."},
         {"role": "model", "parts": "Great to meet you."},
     ]
 )
@@ -36,6 +36,8 @@ chat = model.start_chat(
 now = datetime.now()
 print(f'Good {get_time_of_day(now.hour)} Shasank.\nDate & Time: {now.ctime()}\nHow can I help you today?')
 carry_errors = []
+carry_outputs = []
+carry_commands = []
 while True:
     now = datetime.now()
     if carry_errors:
@@ -51,10 +53,12 @@ while True:
                 number = input("Enter the number of the error ")
             else:
                 number=1
-            query = carry_errors[number-1]
+            query = "command: "+carry_commands[number-1] + ", output: " + carry_outputs[number-1] + ", error: " +carry_errors[number-1]
         elif query=="n":
             pass        
-        carry_errors.clear()    
+        carry_errors.clear()  
+        carry_outputs.clear()
+        carry_commands.clear()  
     else:
         query = input("User: ")
     if query == "thanks that is all for today":
@@ -84,6 +88,8 @@ while True:
             if result.stderr:
                 print("Errors :\n", result.stderr)
                 carry_errors.append(result.stderr)
+                carry_outputs.append(result.stdout)
+                carry_commands.append(command)
 
 # print("Type something (press ESC to stop):")
 
