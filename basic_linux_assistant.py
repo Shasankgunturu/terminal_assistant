@@ -2,6 +2,8 @@
 # give output also for decoding as when debugging carry_errors
 # multiple lines input while doing so
 # deal with &&
+# auto complete
+# !source my-venv/bin/activate
 import google.generativeai as genai
 import os
 import PIL.Image
@@ -23,7 +25,8 @@ genai.configure(api_key=os.environ['APIKEY'])
 model = genai.GenerativeModel("gemini-1.5-flash")
 chat = model.start_chat(
     history=[
-        {"role": "user", "parts": "Hello, I am Shasank. You are a terminal assistant on my Ubuntu system. My OS specs are Elementary OS based on Ubuntu 22.04. I \
+        {"role": "user", "parts": "Hello, I am Shasank. You are a terminal assistant on my Ubuntu system. I would like to call you Batman. \
+         If someone asks your name, reply with I'm Batman. My OS specs are based on Ubuntu 24.04. I \
          want you to understand my daily usage, help me autofill my commands, and also give me the required Linux, git, or any other commands per my\
          query. I also want you to understand my codes and file structures and recommend solutions based on my errors. I am an AI and Robotics \
          developer. Give me simple answers with only the commands and avoid any other information. Note: use apt-get and not just apt. \
@@ -42,8 +45,6 @@ while True:
     now = datetime.now()
     if carry_errors:
         query = input("User: Would you like to look up previous error? y/n ")
-        # while query!="y" or query!="n":
-        #     query = input("User: Would you like to look up previous error? y/n ")
 
         if query=="y":
             if len(carry_errors)>1:
@@ -61,7 +62,7 @@ while True:
         carry_commands.clear()  
     else:
         query = input("User: ")
-    if query == "thanks that is all for today":
+    if query == "thanks that is all for now":
         response = chat.send_message(query)
         rest_of_words = " ".join(response.text.split()[1:])
         print(rest_of_words)
