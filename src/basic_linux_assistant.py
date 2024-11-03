@@ -74,11 +74,10 @@ while True:
         continue
     print("Batman: ", rest_of_words)
     i = input("\nRun the command? y/n ")
-    # while i!="y" or i!="n":
-        # i = input("\nRun the command? y/n ")
     print()
     if i=="y":
         commands = rest_of_words.replace("```", "").strip()
+        commands = rest_of_words.replace("&&", "\n").strip()
         commands = [line.strip() for line in commands.splitlines() if line.strip()]
         commands.reverse()
         for command in commands:
